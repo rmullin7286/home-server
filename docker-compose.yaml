@@ -1,0 +1,101 @@
+version: "3.9"
+services:
+  qbittorrent-vpn:
+    environment:
+      VPN_USERNAME: ${VPN_USERNAME}
+      VPN_PASSWORD: ${VPN_PASSWORD}
+      VPN_ENABLED: "yes"
+      VPN_TYPE: "openvpn"
+      LAN_NETWORK: "10.0.0.0/24"
+    privileged: true
+    ports:
+      - "8080:8080"
+    volumes:
+      - "${CONFIG_DIRECTORY}:/config"
+      - "${DATA_DIRECTORY}:/media/data"
+    image:
+      dyonr/qbittorrentvpn
+    container_name:
+      qbittorrent
+    restart: unless-stopped
+  nzbget:
+    image: lscr.io/linuxserver/nzbget:latest
+    container_name: nzbget
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=US/Pacific
+      - NZBGET_USER=${NZBGET_USER}
+      - NZBGET_PASS=${NZBGET_PASS}
+    volumes:
+      - "${CONFIG_DIRECTORY}/nzbget:/config"
+      - "${DATA_DIRECTORY}:/media/data"
+    ports:
+      - 6789:6789
+    restart: unless-stopped
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    restart: unless-stopped
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: US/Pacific
+    dns: 8.8.8.8 # for some reason, the sonarr image has dns issues. just use google's for now...
+    volumes:
+      - "${DATA_DIRECTORY}:/media/data"
+      - "${CONFIG_DIRECTORY}/sonarr:/config"
+    ports:
+      - "8989:8989"
+  radarr:
+    container_name: radarr
+    restart: unless-stopped
+    ports:
+     - "7878:7878"
+    volumes:
+      - ${CONFIG_DIRECTORY}/radarr:/config
+      - ${DATA_DIRECTORY}:/media/data
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: US/Pacific
+    image: lscr.io/linuxserver/radarr:latest
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: US/Pacific
+    volumes:
+      - ${CONFIG_DIRECTORY}/prowlarr:/config
+    ports:
+      - 9696:9696
+    restart: unless-stopped
+  lidarr:
+    image: lscr.io/linuxserver/lidarr:latest
+    container_name: lidarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=US/Pacific
+    volumes:
+      - ${CONFIG_DIRECTORY}/lidarr:/config
+      - ${DATA_DIRECTORY}:/media/data
+    ports:
+      - 8686:8686
+    restart: unless-stopped
+  # Soulseek daemon for music I can't find with lidarr alone
+  slskd:
+    image: slskd/slskd
+    container_name: slskd
+    ports:
+      - 5030:5030
+      - 5031:5031
+      - 50300:50300
+    environment:
+      - SLSKD_REMOTE_CONFIGURATION=true
+    volumes: 
+      - ${CONFIG_DIRECTORY}/slskd:/app
+      - ${DATA_DIRECTORY}:/media/data
+    restart: unless-stopped
