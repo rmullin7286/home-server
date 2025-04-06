@@ -95,7 +95,7 @@ services:
       - 50300:50300
     environment:
       - SLSKD_REMOTE_CONFIGURATION=true
-    volumes: 
+    volumes:
       - ${CONFIG_DIRECTORY}/slskd:/app
       - ${DATA_DIRECTORY}:/media/data
     restart: unless-stopped
