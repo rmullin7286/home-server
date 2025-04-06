@@ -34,6 +34,10 @@ You'll need to define the following, depending on which services you use:
 | CONFIG_DIRECTORY          | The directory where all application specific configurationn will be stored (mine is `$HOME/config`) |
 | DATA_DIRECTORY            | The directory where all data will be stored (torrent downloads, media library, etc.)                |
 
+# Running
+
+You should be able to run the whole thing with a simple `docker-compose up -d` command in the directory with the yaml and .env files.
+
 # Configuring the "arr" tools
 
 Sonarr/Radar/Prowlarr/Lidarr requires some extra configuration to get up and running. I kinda forgot how I did this all because it's been so long since I've had to tweak it, but the [trash guides](https://trash-guides.info/Sonarr/) are pretty helpful. They require a bit of
