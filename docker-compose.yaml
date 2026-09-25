@@ -1,6 +1,5 @@
 version: "3.9"
 services:
-services:
   gluetun:
     image: qmcgaw/gluetun:latest
     container_name: gluetun
